@@ -6,7 +6,7 @@ import {
   updatecartservice,
   viewcartservices,
 } from "../services/cartservices.js";
-import { trycatch } from "../utilities/AsycErrorHandling.js";
+import { trycatch } from "../utilities/AsyncErrorHandling.js";
 
 //ADD TO CART
 export const addproduct = trycatch(async (req, res) => {

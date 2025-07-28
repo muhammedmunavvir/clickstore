@@ -1,6 +1,6 @@
 import { orderModel } from "../models/order-scheama.js";
 import { usermodel } from "../models/userScheama.js";
-import { trycatch } from "../utilities/AsycErrorHandling.js";
+import { trycatch } from "../utilities/AsyncErrorHandling.js";
 import { CustomErrorhandler } from "../utilities/customErrorHAndling.js";
 import Razorpay from "razorpay";
 import { config } from "dotenv";

@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 import { getproductsModel } from "../models/productsScheama.js";
 import { usermodel } from "../models/userScheama.js";
-import { trycatch } from "../utilities/AsycErrorHandling.js";
+
+
 import { CustomErrorhandler } from "../utilities/customErrorHAndling.js";
 import { orderModel } from "../models/order-scheama.js";
+import { trycatch } from "../utilities/AsyncErrorHandling.js";
+
 //GET ALL USERS
  
 export const allusers = trycatch(async (req, res) => {

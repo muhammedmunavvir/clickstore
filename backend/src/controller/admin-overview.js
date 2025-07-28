@@ -1,5 +1,5 @@
 import { orderModel } from "../models/order-scheama.js";
-import { trycatch } from "../utilities/AsycErrorHandling.js";
+import { trycatch } from "../utilities/AsyncErrorHandling.js";
 //TOTEL ORDERS
 export const totelorders = trycatch(async (req, res) => {
   const totelorders = await orderModel.find();

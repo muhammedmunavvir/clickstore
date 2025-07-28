@@ -1,9 +1,9 @@
 import { orderModel } from "../models/order-scheama.js";
 import { usermodel } from "../models/userScheama.js"; // user model
-import { trycatch } from "../utilities/asycErrorHandling.js";
 import nodemailer from "nodemailer";
 import twilio from "twilio";
 import dotenv from "dotenv";
+import { trycatch } from "../utilities/AsyncErrorHandling.js";
 dotenv.config();
 
 export const myorders = trycatch(async (req, res) => {

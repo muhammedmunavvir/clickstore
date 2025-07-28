@@ -5,7 +5,7 @@ import {
   fetchProductById,
   fetchFeaturedProducts,
 } from "../services/product-services.js";
-import { trycatch } from "../utilities/AsycErrorHandling.js";
+import { trycatch } from "../utilities/AsyncErrorHandling.js";
 
 // Fetch all products
 export const getproducts = trycatch(async (req, res) => {
