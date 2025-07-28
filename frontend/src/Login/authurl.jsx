@@ -12,6 +12,7 @@ function getCookie(name) {
 }
 
 export const AuthRedirect = () => {
+  console.log("hoooi:", document.cookie);
   console.log("Document.cookie:", document.cookie);
 
   
@@ -19,7 +20,7 @@ export const AuthRedirect = () => {
 
   useEffect(() => {
     const token = getCookie("token"); // read token from cookie
-    
+    console.log(token,"tooken");
     if (token) {
       try {
         console.log("hoooi");
