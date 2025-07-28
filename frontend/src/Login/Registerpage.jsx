@@ -82,7 +82,7 @@ const Register = () => {
         try {
          console.log(user)
            await axios.post(
-            "http://localhost:8080/auth/register",
+            `${API_BASE_URL}/auth/register`,
             filterdbody
           );
           toast.success("Registration successful!");

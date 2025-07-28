@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../../config/apiconfig";
 export const Dashboard = () => {
   const [totelu, setotel] = useState([]);
   const [totelp, setotelp] = useState([]);
@@ -9,7 +10,7 @@ export const Dashboard = () => {
 
   const getusers = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/admin/allusers");
+      const res = await axios.get(`${API_BASE_URL}/admin/allusers`);
       setotel(res.data.users);
     } catch {
       console.log("Error fetching users");
@@ -18,7 +19,7 @@ export const Dashboard = () => {
 
   const getproducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/products/all");
+      const res = await axios.get(`${API_BASE_URL}/products/all`);
 
       setotelp(res.data.data);
     } catch (error) {
@@ -30,7 +31,7 @@ export const Dashboard = () => {
   const getorders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/admin/overview/totelorders"
+        `${API_BASE_URL}/admin/overview/totelorders`
       );
 
       setTotalOrders(res.data.totelOrders);
@@ -45,7 +46,7 @@ export const Dashboard = () => {
   }
   const gettotelrevenue = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/admin/totelrevenue");
+      const res = await axios.get(`${API_BASE_URL}/admin/totelrevenue`);
       setrevenue(res.data.totelrevenue);
     } catch (error) {
       console.log(error);

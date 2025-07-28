@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import API_BASE_URL from "../../config/apiconfig";
 
 export const Userdetails = () => {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export const Userdetails = () => {
     const getuser = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/admin/userDetails/${id}`
+          `${API_BASE_URL}/admin/userDetails/${id}`
         );
         console.log(res)
         setdetails(res.data.data);

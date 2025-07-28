@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import API_BASE_URL from "../../config/apiconfig";
 
 export const Addnewproduct = () => {
   const [product, setProduct] = useState({
@@ -37,7 +38,7 @@ export const Addnewproduct = () => {
       );
       formData.append("image", image);
 
-      await axios.post(`http://localhost:8080/admin/newProduct`, formData, {
+      await axios.post(`${API_BASE_URL}/admin/newProduct`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

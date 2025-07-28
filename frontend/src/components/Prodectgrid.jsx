@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE_URL from "../config/apiconfig";
 
 export const Prodectgrid = () => {
   const [featuredproducts, setFeaturedProducts] = useState([]);
@@ -10,7 +11,7 @@ export const Prodectgrid = () => {
   useEffect(() => {
     const getproduct = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/products/featured");
+        const res = await axios.get(`${API_BASE_URL}/products/featured`);
         setFeaturedProducts(res.data.data || []);
       } catch (error) {
         console.log("error fetching products", error);

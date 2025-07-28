@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../config/apiconfig";
 
 const Categorypage = () => {
   const { category } = useParams();
@@ -10,7 +11,7 @@ const Categorypage = () => {
     const getdogproduct = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/products/category?category=${category}`
+          `${API_BASE_URL}/products/category?category=${category}`
         );
         setproduct(res.data.data);
       } catch (error) {

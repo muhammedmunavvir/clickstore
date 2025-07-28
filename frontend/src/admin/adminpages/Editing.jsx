@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import API_BASE_URL from "../../config/apiconfig";
 
 export const Editing = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export const Editing = () => {
 
   const productfetch = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/products/${pID}`);
+      const res = await axios.get(`${API_BASE_URL}/products/${pID}`);
       myform(res.data.data);
       console.log(res.data.data);
     } catch (error) {
@@ -40,7 +41,7 @@ export const Editing = () => {
     e.preventDefault();
     try {
       await axios.patch(
-        `http://localhost:8080/admin/updateProduct/${pID}`,
+        `${API_BASE_URL}/admin/updateProduct/${pID}`,
         form
       );
       toast.success("Product updated");
@@ -62,7 +63,7 @@ const handleImageUpload = async (e) => {
 
   try {
     setUploading(true);
-    const res = await axios.post("http://localhost:8080/admin/newProduct", formData, {
+    const res = await axios.post(`${API_BASE_URL}/admin/newProduct`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

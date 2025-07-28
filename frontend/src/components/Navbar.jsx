@@ -5,6 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { Search, ShoppingCart, Menu, X, User, Package, LogOut } from "lucide-react"
+import API_BASE_URL from "../config/apiconfig"
 
 export const Navbar = () => {
   const [searchitem, setsearchitem] = useState("")
@@ -17,7 +18,7 @@ export const Navbar = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/products/all")
+        const response = await axios.get(`${API_BASE_URL}/products/all`)
         setproducts(response.data.data)
       } catch (error) {
         console.log("Error fetching products", error)
@@ -49,7 +50,7 @@ export const Navbar = () => {
   const getcart = async () => {
     if (userid) {
       try {
-        const res = await axios.get(`http://localhost:8080/cart/view/${userid}`)
+        const res = await axios.get(`${API_BASE_URL}/cart/view/${userid}`)
         setcart(res.data.data)
       } catch (error) {
         console.log(error)

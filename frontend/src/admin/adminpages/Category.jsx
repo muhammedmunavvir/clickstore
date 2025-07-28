@@ -9,6 +9,7 @@ import {
   Package,
   ShoppingCart,
 } from "lucide-react";
+import API_BASE_URL from "../../config/apiconfig";
 
 export const Category = () => {
   const [product, setProduct] = useState([]);
@@ -18,7 +19,7 @@ export const Category = () => {
   const fetchProduct = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:8080/products/all");
+      const res = await axios.get(`${API_BASE_URL}/products/all`);
       setProduct(res.data.data);
     } catch (error) {
       console.log(error);
@@ -33,7 +34,7 @@ export const Category = () => {
 
   const handleDelete = async (_id) => {
     try {
-      await axios.delete(`http://localhost:8080/admin/deleteProduct/${_id}`);
+      await axios.delete(`${API_BASE_URL}/admin/deleteProduct/${_id}`);
       toast.success("Product deleted");
       setProduct((prev) => prev.filter((item) => item._id !== _id));
     } catch (error) {

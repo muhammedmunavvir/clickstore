@@ -1,15 +1,16 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import API_BASE_URL from "../config/apiconfig";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "https://clickstore-2miy.onrender.com";
 
 
 
 const Login = () => {
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/auth/google";
+    window.location.href = `${API_BASE_URL}/auth/google`;
   };
 
   useEffect(() => {

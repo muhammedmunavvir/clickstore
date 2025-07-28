@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API_BASE_URL from "../../config/apiconfig";
 
 export const UserList = () => {
   const [users, setusers] = useState([]);
 
   const getuser = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/admin/allusers");
+      const res = await axios.get(`${API_BASE_URL}/admin/allusers`);
       setusers(res.data.users);
     } catch (error) {
       console.log(error.message);
@@ -26,7 +27,7 @@ export const UserList = () => {
 
   const handleblock = async (id, action) => {
     try {
-      await axios.patch(`http://localhost:8080/admin/blockAndunblock/${id}`, {
+      await axios.patch(`${API_BASE_URL}/admin/blockAndunblock/${id}`, {
         action,
       });
 

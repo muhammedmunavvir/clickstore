@@ -9,7 +9,7 @@
 
 //   const getcat = async () => {
 //     try {
-//       const res = await axios.get(`http://localhost:8080/admin/products/category?category=cat`);
+//       const res = await axios.get(`${API_BASE_URL}/admin/products/category?category=cat`);
 //       setcat(res.data);
 //     } catch (error){
 //       console.log(error);

@@ -1,5 +1,6 @@
 import { toast } from "react-toastify";
 import axios from "axios";
+import API_BASE_URL from "../../config/apiconfig";
 
 export const carthandle = async (product) => {
   const productId = product._id;
@@ -9,7 +10,7 @@ export const carthandle = async (product) => {
   if (user) {
     try {
       const res = await axios.post(
-        `http://localhost:8080/cart/add/${productId}`
+        `${API_BASE_URL}/cart/add/${productId}`
       );
       console.log(res);
       toast.success("Item successfully added to the cart!");

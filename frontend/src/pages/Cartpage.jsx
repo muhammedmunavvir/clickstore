@@ -15,6 +15,7 @@ import {
   AlertCircle,
   ShoppingBag,
 } from "lucide-react";
+import API_BASE_URL from "../config/apiconfig";
 
 const Cartpage = () => {
   const [cart, setCart] = useState([]);
@@ -31,7 +32,7 @@ const Cartpage = () => {
         navigate("/auth/login");
         return;
       }
-      const res = await axios.get(`http://localhost:8080/cart/view/${userid}`);
+      const res = await axios.get(`${API_BASE_URL}/cart/view/${userid}`);
       setCart(res.data.data || []);
     } catch (error) {
       console.log(error);
@@ -49,7 +50,7 @@ const Cartpage = () => {
     try {
       const productId = product._id;
       // const updatedCart = cart.filter((item) => item.id !== product.id);
-      await axios.delete(`http://localhost:8080/cart/remove/${productId}`, {
+      await axios.delete(`${API_BASE_URL}/cart/remove/${productId}`, {
         // cart: updatedCart,
       }); // Update cart in  backend
 
@@ -75,7 +76,7 @@ const Cartpage = () => {
     setLoadingId(id);
     try {
       await axios.post(
-        `http://localhost:8080/updatecart/update/${id}`,
+        `${API_BASE_URL}/updatecart/update/${id}`,
         { action: "increment" },
         { withCredentials: true }
       );
@@ -97,7 +98,7 @@ const Cartpage = () => {
     setLoadingId(id);
     try {
       await axios.post(
-        `http://localhost:8080/updatecart/update/${id}`,
+        `${API_BASE_URL}/updatecart/update/${id}`,
         { action: "decrement" },
         { withCredentials: true }
       );
@@ -357,7 +358,7 @@ export default Cartpage;
 
 //   const cartDisplay = async (user) => {
 //     try {
-//       const res = await axios.get(`http://localhost:8080/cart/view/${user}`);
+//       const res = await axios.get(`${api_base_url}/cart/view/${user}`);
 
 //       setCart(res.data.data);
 //     } catch (error) {
@@ -375,7 +376,7 @@ export default Cartpage;
 //     try {
 //       const productId = product._id;
 //       // const updatedCart = cart.filter((item) => item.id !== product.id);
-//       await axios.delete(`http://localhost:8080/cart/remove/${productId}`, {
+//       await axios.delete(`${api_base_url}/cart/remove/${productId}`, {
 //         // cart: updatedCart,
 //       }); // Update cart in  backend
 
@@ -413,7 +414,7 @@ export default Cartpage;
 //   setLoadingId(id);
 //   try {
 //     await axios.post(
-//       `http://localhost:8080/updatecart/update/${id}`,
+//       `${api_base_url}/updatecart/update/${id}`,
 //       { action: "increment" },
 //       { withCredentials: true }
 //     );
@@ -449,7 +450,7 @@ export default Cartpage;
 //   setLoadingId(id);
 //   try {
 //     await axios.post(
-//       `http://localhost:8080/updatecart/update/${id}`,
+//       `${api_base_url}/updatecart/update/${id}`,
 //       { action: "decrement" },
 //       { withCredentials: true }
 //     );
