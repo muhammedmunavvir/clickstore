@@ -15,7 +15,7 @@ export const googleCallback = (req, res) => {
   );
  
   res.cookie("token", token, {
-    httpOnly: true, // You can set this to true if you don’t need client-side access
+    // httpOnly: false, // You can set this to true if you don’t need client-side access
     secure: true,   // true in production (HTTPS)
     sameSite: "None",
   });
