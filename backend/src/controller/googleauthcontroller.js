@@ -20,5 +20,5 @@ export const googleCallback = (req, res) => {
     sameSite: "Lax",
   });
  
-  res.redirect("http://localhost:3000/auth/gettingcookie");
+  res.redirect("https://clickstore-pi.vercel.app/auth/gettingcookie");
 };
