@@ -19,8 +19,11 @@ export const AuthRedirect = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = getCookie("token"); // read token from cookie
-    console.log(token,"tooken");
+    // const token = getCookie("token"); // read token from cookie
+    // console.log(token,"tooken");
+
+      const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
     if (token) {
       try {
         console.log("hoooi");

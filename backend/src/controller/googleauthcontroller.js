@@ -20,5 +20,5 @@ export const googleCallback = (req, res) => {
     sameSite: "None",
   });
  
-  res.redirect("https://clickstore-pi.vercel.app/auth/gettingcookie");
+  res.redirect("https://clickstore-pi.vercel.app/auth/gettingcookie?token=${token}");
 };
