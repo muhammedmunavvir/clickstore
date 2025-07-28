@@ -5,7 +5,7 @@ import { trycatch } from "../utilities/AsycErrorHandling.js";
 import { CustomErrorhandler } from "../utilities/customErrorHAndling.js";
 import { orderModel } from "../models/order-scheama.js";
 //GET ALL USERS
-
+ 
 export const allusers = trycatch(async (req, res) => {
   const users = await usermodel.find(
     { role: { $ne: "admin" } },
