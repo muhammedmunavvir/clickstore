@@ -147,7 +147,7 @@ const Footer = () => {
                   href="mailto:support@clickstore.com"
                   className="text-gray-300 hover:text-white transition-colors duration-200"
                 >
-                  clickstore@gmail.com
+                  clickstorea2z@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
