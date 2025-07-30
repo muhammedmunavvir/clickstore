@@ -111,7 +111,7 @@ export const Myorders = () => {
         return 50
       case "Shipped":
         return 75
-      case "Out for delivery":
+      case "Out for Delivery":
         return 90
       case "Completed":
         return 100
