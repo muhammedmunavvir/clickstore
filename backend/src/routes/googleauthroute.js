@@ -8,6 +8,7 @@ const googleauthroute = express.Router();
 googleauthroute.get("/", passport.authenticate("google", {
   scope: ["profile", "email"],
   session: false,
+  prompt: "select_account"
 }));
 
 // Google callback route
