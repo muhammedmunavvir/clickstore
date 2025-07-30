@@ -278,11 +278,11 @@ export const Myorders = () => {
                     </div>
 
                     {["Order confirmed", "Packing"].includes(order.status) && (
-                      <>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-2 mt-2 sm:mt-0">
                         <button
                           onClick={() => ordercancel(order.orderId)}
                           disabled={cancellingOrderId === order.orderId}
-                          className="bg-red-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
+                          className="bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
                         >
                           {cancellingOrderId === order.orderId ? (
                             <>
@@ -296,10 +296,10 @@ export const Myorders = () => {
                             </>
                           )}
                         </button>
-                        <p className="text-xs text-gray-500 mt-2 italic">
-                         You cannot cancel the order once it is shipped
+                        <p className="text-xs text-gray-500 sm:mt-0 mt-1 italic">
+                          You cannot cancel the order once it is shipped
                         </p>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
