@@ -252,7 +252,7 @@ export const Myorders = () => {
                       </div>
                     </div>
 
-                    {order.status !== "Cancelled" && order.status === "Shipped" && (
+                    {order.status !== "Cancelled" && order.status === "Packing" && (
                       <button
                         onClick={() => ordercancel(order.orderId)}
                         disabled={cancellingOrderId === order.orderId}
