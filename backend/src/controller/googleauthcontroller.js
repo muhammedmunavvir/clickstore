@@ -22,5 +22,5 @@ export const googleCallback = (req, res) => {
     // sameSite: "Lax", //on localhost
   });
    console.log(process.env.FRONTEND_URL)
-  res.redirect(`${process.env.FRONTEND_URL}/auth/gettingcookie?token=${token}`);
+  res.redirect(`https://clickstore-pi.vercel.app/auth/gettingcookie?token=${token}`);
 };
