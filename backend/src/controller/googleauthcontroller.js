@@ -16,10 +16,10 @@ export const googleCallback = (req, res) => {
  
   res.cookie("token", token, {
     httpOnly: false, // You can set this to true if you don’t need client-side access
-    // secure: true,   // true in production (HTTPS)
-    secure: false,   // false in localhost
-    // sameSite: "None", //on priduction
-    sameSite: "Lax", //on localhost
+    secure: true,   // true in production (HTTPS)
+    // secure: false,   // false in localhost
+    sameSite: "None", //on priduction
+    // sameSite: "Lax", //on localhost
   });
    console.log(process.env.FRONTEND_URL)
   res.redirect(`${process.env.FRONTEND_URL}/auth/gettingcookie?token=${token}`);
