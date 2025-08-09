@@ -12,6 +12,7 @@ config();
 import crypto from "crypto"; // Ensure the crypto module is imported
 import { orderdetailsService } from "../services/payment-service.js";
 import axios from "axios";
+import { CartModel } from "../models/cartmodel.js";
 
 // Payment Route
 export const payment = trycatch(async (req, res) => {
@@ -28,30 +29,29 @@ export const payment = trycatch(async (req, res) => {
     throw CustomErrorhandler("User not found.");
   }
 
-  const cart = user.cart;
+const cart = await CartModel.find({ userId }).populate("productId");
 
-  if (cart.length === 0) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Cart is empty. Add items to proceed.",
-    });
-  }
+if (cart.length === 0) {
+  return res.status(400).json({
+    status: "fail",
+    message: "Cart is empty. Add items to proceed.",
+  });
+}
 
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.qty,
-    0
-  );
-  
+const totalAmount = cart.reduce(
+  (sum, item) => sum + item.productId.price * item.qty,
+  0
+);
 
-  // Create Razorpay order
-  const options = {
-    amount: totalAmount * 100, // Convert to paise
-    currency: "INR",
-    receipt: `order_rcpt_${Date.now()}`, // Random 10-character string
-    // payment_capture: 1,  // Auto capture payment
-  };
+// Razorpay options
+const options = {
+  amount: totalAmount * 100, // Convert to paise
+  currency: "INR",
+  receipt: `order_rcpt_${Date.now()}`,
+};
 
-  const order = await instance.orders.create(options);
+const order = await instance.orders.create(options);
+
 
   if (!order) return res.status(500).send("Some error occured");
 
@@ -79,9 +79,10 @@ export const payment = trycatch(async (req, res) => {
     newOrder, // Order details object
     shippingAddress // Shipping address from request body
   );
-
+ 
   // Clear the cart
-  user.cart = [];
+  await CartModel.deleteMany({ userId });
+
   user.markModified("cart");
   await user.save();
 
@@ -136,6 +137,7 @@ export const verifypayment = trycatch(async (req, res) => {
 });
 
 //send email to user after creating order
+
 
 const sendOrderConfirmationEmail = async (toEmail, orderDetails) => {
   console.log("sendOrderConfirmationEmail");

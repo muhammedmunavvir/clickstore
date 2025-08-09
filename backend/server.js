@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "https://clickstore-pi.vercel.app",
+    origin:process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -45,3 +45,4 @@ console.log("PORT VALUE:", PORT);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+ 

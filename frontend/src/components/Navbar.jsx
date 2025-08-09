@@ -6,6 +6,7 @@ import axios from "axios"
 import { toast } from "react-toastify"
 import { Search, ShoppingCart, Menu, X, User, Package, LogOut } from "lucide-react"
 import API_BASE_URL from "../config/apiconfig"
+import { useCartstore } from "../store/cartstore"
 
 export const Navbar = () => {
   const [searchitem, setsearchitem] = useState("")
@@ -44,23 +45,14 @@ export const Navbar = () => {
   }
 
   const nav = useNavigate()
-  const [cart, setcart] = useState([])
+  // const [cart, setcart] = useState([])
   const userid = localStorage.getItem("userid")
 
-  const getcart = async () => {
-    if (userid) {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/cart/view/${userid}`)
-        setcart(res.data.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
+  const { cart, fetchCart } = useCartstore()
 
   useEffect(() => {
-    getcart()
-  }, [])
+  if (userid) fetchCart(userid)
+}, [userid])
 
   function logout() {
     localStorage.clear()

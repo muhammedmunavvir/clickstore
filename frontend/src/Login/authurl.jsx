@@ -24,6 +24,7 @@ export const AuthRedirect = () => {
 
       const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
+     console.log("Token from URL:", token); // ✅ check what happens
     if (token) {
       try {
         console.log("hoooi");

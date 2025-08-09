@@ -10,11 +10,10 @@ import { trycatch } from "../utilities/AsyncErrorHandling.js";
 
 //ADD TO CART
 export const addproduct = trycatch(async (req, res) => {
- 
-  const userId = req.user.id; 
- 
-  const productId = req.params.id; 
-  const cart =  await addtocartservice(userId, productId);
+  const userId = req.user.id;
+
+  const productId = req.params.id;
+  const cart = await addtocartservice(userId, productId);
 
   res.status(201).json({
     status: "success",
@@ -26,7 +25,6 @@ export const addproduct = trycatch(async (req, res) => {
 //VIEW CART
 
 export const viewcart = trycatch(async (req, res) => {
- 
   const userId = req.user.id;
 
   const { message, data } = await viewcartservices(userId);
@@ -37,8 +35,9 @@ export const viewcart = trycatch(async (req, res) => {
 
 export const removefromCart = trycatch(async (req, res) => {
   const productid = req.params.id;
+  
 
-  const userId = req.user.id;
+  const userId = req.user.id; 
 
   const cart = removeCartService(userId, productid);
 
@@ -61,4 +60,3 @@ export const updatecart = trycatch(async (req, res) => {
     .status(200)
     .json({ status: "success", message: "Cart updated successfully" });
 });
-  

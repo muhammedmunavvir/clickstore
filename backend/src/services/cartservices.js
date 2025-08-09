@@ -1,93 +1,83 @@
+import { CartModel } from "../models/cartmodel.js";
 import { getproductsModel } from "../models/productsScheama.js";
 import { usermodel } from "../models/userScheama.js";
 import { CustomErrorhandler } from "../utilities/customErrorHAndling.js";
 
-//ADD TO CART
 export const addtocartservice = async (userId, productId) => {
-  const product = await getproductsModel.findById({ _id: productId });
+  const product = await getproductsModel.findById(productId);
+  if (!product) throw CustomErrorhandler("Product not found");
 
-  if (!product) {
-    throw new CustomErrorhandler("Product not found");
-  }
-  const user = await usermodel.findById({ _id: userId });
-  
-  if (!user) {
-    throw CustomErrorhandler("User not found"); 
-  }
+  const existing = await CartModel.findOne({ userId, productId });
+  if (existing) throw CustomErrorhandler("Product already in cart");
 
-  const existingProduct = user.cart.find(
-    (item) => item._id.toString() === productId
-  );
+  const newItem = new CartModel({ userId, productId, qty: 1 });
+  await newItem.save();
 
-  if (existingProduct) {
-    throw CustomErrorhandler("This item is already in your cart");
-  }
-  
-
-  user.cart.push(product);
-  await user.save();
-  return user.cart;
+  return newItem;
 };
 
 //VIEW CART
   
+
 export const viewcartservices = async (userId) => {
-  const user = await usermodel.findById(userId);
-  if (!user) {
-    throw  CustomErrorhandler("User not found");
+ 
+  const cartItems = await CartModel.find({ userId }).populate("productId");
+ 
+ 
+  if (!cartItems || cartItems.length === 0) {
+    return { data: [], message: "Cart is empty" };
   }
 
-  if (user.cart.length === 0) {
-    return { data: user.cart, message: "cart is empty" };
-  }
-  return { data: user.cart, message: "get cart" };
-}; 
+  // Format to include product data with qty
+  const formatted = cartItems.map((item) => ({
+    product: item.productId,
+    qty: item.qty,  
+  }));
+
+  return { data: formatted, message: "Cart fetched" };
+};
 
 //REMOVE PRODUCT FROM CART
  
 export const removeCartService = async (userId, productId) => {
-  const user = await usermodel.findOne({ _id: userId });
+  const deleted = await CartModel.deleteOne({ userId, productId });
 
-  if (!user) {
-    throw CustomErrorhandler("User not found");
+  if (deleted.deletedCount === 0) {
+    throw CustomErrorhandler("Item not found in cart");
   }
 
-  user.cart = user.cart.filter((item) => item._id.toString() !== productId);
-  await user.save();
-
-  return user.cart;
+  return { message: "Item removed from cart" };
 };
   
 //UPDATE CART services
-
-export const updatecartservice = async (userId, id, action) => {
-
+export const updatecartservice = async (userId, productId, action) => {
   try {
-    const user = await usermodel.findById({ _id: userId });
+    // Each cart item is a document, so find by userId and productId
+    const item = await CartModel.findOne({ userId, productId });
 
-    if (!user) {
-      throw CustomErrorhandler("user not found");
-    }
-    const cartItem = user.cart.find((item) => item._id.toString() === id);
+    
 
-    if (!cartItem) {
-      throw Error("no cart item");
+    if (!item) {
+      throw CustomErrorhandler("Cart item not found");
     }
 
     if (action === "increment") {
-      cartItem.qty += 1;
+      item.qty += 1;
     } else if (action === "decrement") {
-      if (cartItem.qty > 1) {
-        cartItem.qty -= 1;
+      if (item.qty > 1) {
+        item.qty -= 1;
       } else {
-        throw CustomErrorhandler("cannot decrement below 1");
+        throw CustomErrorhandler("Cannot decrement below 1");
       }
     } else {
-      throw CustomErrorhandler("invalid");
+      throw CustomErrorhandler("Invalid action");
     }
-    user.markModified("cart");
-    await user.save();
-  } catch {
-    throw CustomErrorhandler("somthing went wrong");
+
+    await item.save();
+
+    return { success: true, cartItem: item };
+  } catch (err) {
+    throw CustomErrorhandler(err.message || "Something went wrong");
   }
 };
+

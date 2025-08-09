@@ -3,6 +3,8 @@ import axios from "axios";
 import API_BASE_URL from "../config/apiconfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useCartstore } from "../store/cartstore";
+
 
 const PaymentSection = () => {
   const currentuseremail = localStorage.getItem("email");
@@ -19,9 +21,11 @@ const PaymentSection = () => {
     email: currentuseremail,
     paymentmethod: "",
   });
-
+ 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const clearCart = useCartstore((state) => state.clearCart);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +82,7 @@ const PaymentSection = () => {
       });
 
       const orderID = response.data.razorpay_order_id;
-
+      clearCart();
       if (paymentmethod === "UPI") {
         navigate("/razorpaycheckflow", {
           state: { totalAmount: response.data.totalAmount, orderID },

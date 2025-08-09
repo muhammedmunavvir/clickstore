@@ -5,7 +5,9 @@ import { carthandle } from "../foraddcart/Addcart";
 import { toast } from "react-toastify";
 import API_BASE_URL from "../../config/apiconfig";
 
+import { useCartstore } from "../../store/cartstore";
 const Productdetails = () => {
+  window.scroll(0, 0);
   const { id } = useParams();
   const [product, setProducts] = useState(null);
   const navigate = useNavigate();
@@ -13,9 +15,7 @@ const Productdetails = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${API_BASE_URL
-
-        }/products/${id}`);
+        const res = await axios.get(`${API_BASE_URL}/products/${id}`);
         setProducts(res.data.data);
       } catch (error) {
         console.log("Error fetching product:", error);
@@ -23,15 +23,29 @@ const Productdetails = () => {
     };
     fetchProducts();
   }, [id]);
-
+  const userId = localStorage.getItem("userid");
+  const { addItem } = useCartstore();
   const tocart = async (product) => {
-    const userLoggedIn =
-      localStorage.getItem("userid") && localStorage.getItem("userrole");
-    if (userLoggedIn) {
-      await carthandle(product);
-    } else {
+    const userLoggedIn = userId && localStorage.getItem("userrole");
+
+    if (!userLoggedIn) {
       toast.warning("Please log in to add a product");
       navigate("/auth/login");
+      return;
+    }
+
+    try {
+      await addItem(product._id); 
+      toast.success("Product added successfully");
+    } catch (error) {
+      if (
+        error.response?.data?.message === "Product already in cart" ||
+        error.message === "Product already in cart"
+      ) {
+        toast.info("Product is already in your cart");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -90,7 +104,9 @@ const Productdetails = () => {
             </p>
 
             <div className="mb-6">
-              <span className="text-2xl font-bold text-blue-400">₹{product.price}</span>
+              <span className="text-2xl font-bold text-blue-400">
+                ₹{product.price}
+              </span>
               <div className="mt-2 inline-block bg-yellow-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
                 ⭐ {product.rating}
               </div>

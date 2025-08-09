@@ -1,47 +1,39 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  CheckCircle,
-  Package,
-  MapPin,
-  Mail,
-  Home,
-  Truck,
-} from "lucide-react";
+import { CheckCircle, Package, MapPin, Mail, Home, Truck } from "lucide-react";
 import API_BASE_URL from "../config/apiconfig";
 
 const Summarypage = () => {
   window.scrollTo(0, 0);
   const navigate = useNavigate();
 
-  const [Odetails, setOdetails] = useState([]);
+  const [last, setLast] = useState(null);
   const userId = localStorage.getItem("UserId");
   const email = localStorage.getItem("email");
 
-  const gettotel = async () => {
+  const getLatestOrder = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/orderdeatils/${userId}`);
-      setOdetails(res.data.data);
+      setLast(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    gettotel();
+    getLatestOrder();
   }, []);
 
-  const last = Odetails.length > 0 ? Odetails[Odetails.length - 1] : null;
-  const pro = last ? last.products : [];
+  const pro = last?.products || [];
   const shipping = last?.shippingAddress || {};
-
-  const price = pro.map((item) => item.price * item.qty);
+  const price = pro.map((item) => item.productId?.price * item.qty || 0);
   const total = price.reduce((acc, cur) => acc + cur, 0);
 
   const backclickhandle = () => {
     navigate("/");
   };
+
   const Tomyorder = () => {
     navigate("/myorders");
   };
@@ -55,7 +47,9 @@ const Summarypage = () => {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4 animate-pulse">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Order Confirmed!</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            Order Confirmed!
+          </h1>
           <p className="text-lg text-gray-600">Thank you for your purchase</p>
           <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-blue-500 mx-auto mt-4 rounded-full"></div>
         </div>
@@ -64,12 +58,13 @@ const Summarypage = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* ✅ Left Column */}
           <div className="lg:col-span-2 space-y-6">
-
             {/* Order Info */}
             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
               <div className="flex items-center mb-4">
                 <Package className="w-6 h-6 text-blue-600 mr-3" />
-                <h2 className="text-xl font-semibold text-gray-800">Order Information</h2>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Order Information
+                </h2>
               </div>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="bg-gray-50 rounded-lg p-4">
@@ -78,7 +73,9 @@ const Summarypage = () => {
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-sm text-gray-500 mb-1">Total Amount</p>
-                  <p className="font-semibold text-2xl text-green-600">₹{total.toLocaleString()}</p>
+                  <p className="font-semibold text-2xl text-green-600">
+                    ₹{total.toLocaleString()}
+                  </p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="text-sm text-gray-500 mb-1">Status</p>
@@ -95,34 +92,48 @@ const Summarypage = () => {
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                 <div className="flex items-center mb-6">
                   <Package className="w-6 h-6 text-purple-600 mr-3" />
-                  <h2 className="text-xl font-semibold text-gray-800">Items Purchased</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    Items Purchased
+                  </h2>
                   <span className="ml-auto bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded-full">
-                    {pro.length} {pro.length === 1 ? 'item' : 'items'}
+                    {pro.length} {pro.length === 1 ? "item" : "items"}
                   </span>
                 </div>
                 <div className="space-y-4">
-                  {pro.map((item, index) => (
-                    <div key={index} className="flex items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                      <div className="relative">
-                        <img
-                          src={item.image || item.url || "https://via.placeholder.com/100"}
-                          alt={item.heading || "Product"}
-                          className="w-20 h-20 object-cover rounded-lg shadow-md"
-                        />
-                        <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                          {item.qty}
-                        </span>
+                  {pro.map((item, index) => {
+                    const product = typeof item.productId === "object" ? item.productId : null;
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="relative">
+                          <img
+                            src={product?.url || "https://via.placeholder.com/100"}
+                            alt={product?.heading || "Product"}
+                            className="w-20 h-20 object-cover rounded-lg shadow-md"
+                          />
+                          <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                            {item.qty}
+                          </span>
+                        </div>
+                        <div className="flex-1 ml-4">
+                          <h3 className="font-semibold text-gray-800 mb-1">
+                            {product?.heading || "Unknown Product"}
+                          </h3>
+                          <p className="text-sm text-gray-500">Qty: {item.qty}</p>
+                          <p className="text-sm text-gray-500">
+                            Price: ₹{product?.price ? product.price.toLocaleString() : "N/A"}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-lg text-gray-800">
+                            ₹{product?.price ? (product.price * item.qty).toLocaleString() : "N/A"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1 ml-4">
-                        <h3 className="font-semibold text-gray-800 mb-1">{item.heading}</h3>
-                        <p className="text-sm text-gray-500">Qty: {item.qty}</p>
-                        <p className="text-sm text-gray-500">Price: ₹{item.price.toLocaleString()}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-lg text-gray-800">₹{(item.price * item.qty).toLocaleString()}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -138,7 +149,8 @@ const Summarypage = () => {
               </div>
               <div className="bg-green-50 rounded-lg p-4">
                 <p className="text-sm text-gray-600 mb-2">Confirmation sent to:</p>
-                <p className="font-medium text-gray-800">{email || "N/A"}</p>
+                <p className="font-medium text-gray-800 break-words whitespace-normal">{email || "N/A"}</p>
+
                 <div className="flex items-center mt-3 text-green-600">
                   <CheckCircle className="w-4 h-4 mr-2" />
                   <span className="text-sm">Email sent successfully</span>
@@ -191,13 +203,16 @@ const Summarypage = () => {
             <Home className="w-5 h-5 mr-2" />
             Continue Shopping
           </button>
-          <button onClick={Tomyorder} className="flex items-center justify-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300 border-2 border-gray-200 hover:border-gray-300">
+          <button
+            onClick={Tomyorder}
+            className="flex items-center justify-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300 border-2 border-gray-200 hover:border-gray-300"
+          >
             <Package className="w-5 h-5 mr-2" />
             Track Order
           </button>
         </div>
 
-        {/* ✅ Footer Thank You */}
+        {/* ✅ Footer */}
         <div className="text-center mt-8 p-6 bg-white rounded-2xl shadow-lg border border-gray-100">
           <p className="text-gray-600 mb-2">🎉 Thank you for choosing us!</p>
           <p className="text-sm text-gray-500">We appreciate your trust and look forward to serving you again.</p>
