@@ -66,7 +66,7 @@ const generateOrderPDF = async (orderId, orderData) => {
 
     const pickupAddressLines = [
       "CLICKSTORE",
-      "Koolivayal, Cherukattoor (PO)",
+      " Cherukattoor (PO)",
       "Wayanad, Kerala - 670721",
       "Email: clickstorea2z@gmail.com",
       "TRN: 322400002305ES2",
