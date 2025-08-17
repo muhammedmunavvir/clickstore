@@ -151,6 +151,8 @@ const generateOrderPDF = async (orderId, orderData) => {
         y += 7;
       }
 
+      //FOR UNDERSTAND THE SERVER ISSUE
+
       pdf.text(`${i + 1}`, margin + 1, y + 5);
       pdf.text(p.heading || "", margin + 20, y + 5);
       pdf.text(p.catogory || "", 100, y + 5);
