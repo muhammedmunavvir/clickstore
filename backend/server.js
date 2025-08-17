@@ -19,7 +19,8 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "https://clickstore-pi.vercel.app", // your frontend
+    origin: "https://clickstore-pi.vercel.app",
+    // origin: "http://localhost:3000",
     credentials: true,
   })
 );

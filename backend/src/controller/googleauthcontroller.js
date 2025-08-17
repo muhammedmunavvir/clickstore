@@ -14,6 +14,7 @@ export const googleCallback = (req, res) => {
     { expiresIn: "1h" }
   );
  
+  // on production
   res.cookie("token", token, {
     httpOnly: false, // You can set this to true if you don’t need client-side access
     secure: true,   // true in production (HTTPS)
@@ -23,4 +24,16 @@ export const googleCallback = (req, res) => {
   });
    console.log(process.env.FRONTEND_URL)
   res.redirect(`https://clickstore-pi.vercel.app/auth/gettingcookie?token=${token}`);
+
+
+  // local development
+  // res.cookie("token", token, {
+  //   httpOnly: false, // You can set this to true if you don’t need client-side access
+  //   secure: false,   // true in production (HTTPS)
+  //   secure: true,   // false in localhost
+    
+  //   sameSite: "Lax", //on localhost
+  // });
+  //  console.log(process.env.FRONTEND_URL)
+  // res.redirect(`http://localhost:3000/auth/gettingcookie?token=${token}`);
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import API_BASE_URL from "../../config/apiconfig";
 import jsPDF from "jspdf";
+
 // Status badge component
 const StatusBadge = ({ status }) => {
   const statusStyles = {
@@ -10,12 +11,12 @@ const StatusBadge = ({ status }) => {
     Cancelled: "bg-red-100 text-red-700",
     default: "bg-gray-100 text-gray-700",
   };
-  
+
   return (
     <span
-    className={`text-xs px-3 py-1 rounded-full font-semibold ${
-      statusStyles[status] || statusStyles.default
-    }`}
+      className={`text-xs px-3 py-1 rounded-full font-semibold ${
+        statusStyles[status] || statusStyles.default
+      }`}
     >
       {status}
     </span>
@@ -29,38 +30,38 @@ const generateOrderPDF = async (orderId, orderData) => {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const margin = 15;
     let y = margin;
-    
+
     // Title
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
     pdf.setTextColor(40, 40, 40);
     pdf.text("ORDER INVOICE", pdfWidth / 2, y, { align: "center" });
     y += 10;
-    
+
     // Order Info
     const createdDate = new Date(orderData.createdAt);
     const day = createdDate.getDate().toString().padStart(2, "0");
     const month = createdDate.toLocaleString("default", { month: "long" });
     const year = createdDate.getFullYear();
     const formattedDate = `${day}-${month.toLowerCase()}-${year}`;
-    
+
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
     pdf.text(`Order ID: ${orderData.orderId || orderData._id}`, margin, y);
     pdf.text(`Date: ${formattedDate}`, pdfWidth - margin, y, { align: "right" });
     y += 8;
-    
+
     // Divider
     pdf.setDrawColor(200, 200, 200);
     pdf.line(margin, y, pdfWidth - margin, y);
     y += 5;
-    
+
     // Pickup Address
     pdf.setFont("helvetica", "bold");
     pdf.text("Pickup Address", margin, y);
     pdf.setFont("helvetica", "normal");
     y += 6;
-    
+
     const pickupAddressLines = [
       "CLICKSTORE",
       "Cherukattoor (PO)",
@@ -69,7 +70,7 @@ const generateOrderPDF = async (orderId, orderData) => {
       "TRN: 322400002305ES2",
       "FSSAI: 21320247000337",
     ];
-    
+
     pickupAddressLines.forEach((line) => {
       if (y > 250) {
         pdf.addPage();
@@ -78,9 +79,9 @@ const generateOrderPDF = async (orderId, orderData) => {
       pdf.text(line, margin, y);
       y += 5;
     });
-    
+
     y += 5;
-    
+
     // Shipping Address
     const a = orderData.shippingAddress || {};
     pdf.setFont("helvetica", "bold");
@@ -99,7 +100,7 @@ const generateOrderPDF = async (orderId, orderData) => {
       `Phone: ${a.mobilenumber || ""}`,
       `Email: ${a.email || ""}`,
     ];
-    
+
     shippingAddressLines.forEach((line) => {
       if (y > 250) {
         pdf.addPage();
@@ -115,7 +116,7 @@ const generateOrderPDF = async (orderId, orderData) => {
     pdf.setFont("helvetica", "bold");
     pdf.text(`Products (${orderData.products.length})`, margin, y);
     y += 6;
-    
+
     // Product Table Header
     pdf.setFillColor(245, 245, 245);
     pdf.rect(margin, y, pdfWidth - margin * 2, 7, "F");
@@ -127,10 +128,11 @@ const generateOrderPDF = async (orderId, orderData) => {
     pdf.text("Qty", 140, y + 5);
     pdf.text("Price", pdfWidth - margin - 5, y + 5, { align: "right" });
     y += 7;
-    
+
     // Product Rows
     pdf.setFont("helvetica", "normal");
     orderData.products.forEach((p, i) => {
+      const prod = p.productId || {}; // safe access
       if (y > 250) {
         pdf.addPage();
         y = margin;
@@ -144,13 +146,14 @@ const generateOrderPDF = async (orderId, orderData) => {
         pdf.text("Qty", 140, y + 5);
         pdf.text("Price", pdfWidth - margin - 5, y + 5, { align: "right" });
         y += 7;
+        pdf.setFont("helvetica", "normal");
       }
 
       pdf.text(`${i + 1}`, margin + 1, y + 5);
-      pdf.text(p.heading || "", margin + 20, y + 5);
-      pdf.text(p.catogory || "", 100, y + 5);
+      pdf.text(prod.heading || "", margin + 20, y + 5);
+      pdf.text(prod.catogory || "", 100, y + 5);
       pdf.text(`${p.qty || 1}`, 140, y + 5);
-      pdf.text(`${p.price}`, pdfWidth - margin - 5, y + 5, { align: "right" });
+      pdf.text(`${prod.price || 0}`, pdfWidth - margin - 5, y + 5, { align: "right" });
       y += 6;
 
       if (i < orderData.products.length - 1) {
@@ -159,7 +162,7 @@ const generateOrderPDF = async (orderId, orderData) => {
         y += 3;
       }
     });
-    
+
     if (y > 200) {
       pdf.addPage();
       y = margin;
@@ -187,7 +190,7 @@ const generateOrderPDF = async (orderId, orderData) => {
     const boxHeight = 14;
     const boxWidth = pdfWidth - margin * 2;
     pdf.rect(margin, y, boxWidth, boxHeight, "F");
-    
+
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(12);
     pdf.setTextColor(30, 30, 30);
@@ -198,7 +201,7 @@ const generateOrderPDF = async (orderId, orderData) => {
     );
 
     y += boxHeight + 5;
-    
+
     const qrImage = "/WhatsApp Image 2025-08-16 at 09.49.48_9184f88a.jpg";
     // Add QR Code image
     const qrSize = 40; // mm
@@ -240,45 +243,35 @@ const generateOrderPDF = async (orderId, orderData) => {
 // Shipping Address Component
 const ShippingAddress = ({ address }) => (
   <div className="text-gray-700 leading-6">
-    <p>
-      <strong>Name:</strong> {address?.address}
-    </p>
-    <p>
-      <strong>House:</strong> {address?.housename}
-    </p>
-    <p>
-      <strong>Place:</strong> {address?.place}
-    </p>
-    <p>
-      <strong>Post Office:</strong> {address?.postOffice}
-    </p>
-    <p>
-      <strong>District:</strong> {address?.district}
-    </p>
-    <p>
-      <strong>State:</strong> {address?.state}
-    </p>
-    <p>
-      <strong>Pincode:</strong> {address?.pincode}
-    </p>
+    <p><strong>Name:</strong> {address?.address}</p>
+    <p><strong>House:</strong> {address?.housename}</p>
+    <p><strong>Place:</strong> {address?.place}</p>
+    <p><strong>Post Office:</strong> {address?.postOffice}</p>
+    <p><strong>District:</strong> {address?.district}</p>
+    <p><strong>State:</strong> {address?.state}</p>
+    <p><strong>Pincode:</strong> {address?.pincode}</p>
     <p className="mt-2 text-sm">📞 {address?.mobilenumber}</p>
     <p className="text-sm">📧 {address?.email}</p>
   </div>
 );
 
 // Product Card
-const ProductCard = ({ product }) => (
-  <div className="min-w-[140px] bg-gray-50 rounded-lg p-2 border shadow-sm">
-    <img
-      src={product.url}
-      alt={product.heading}
-      className="w-full h-24 object-cover rounded mb-2"
-    />
-    <p className="text-sm font-medium line-clamp-1">{product.heading}</p>
-    <p className="text-xs text-gray-500">Category: {product.catogory}</p>
-    <p className="text-xs font-semibold">Qty: {product.qty || 1}</p>
-  </div>
-);
+const ProductCard = ({ product }) => {
+  const prod = product.productId || {}; // safely get product info
+
+  return (
+    <div className="min-w-[140px] bg-gray-50 rounded-lg p-2 border shadow-sm">
+      <img
+        src={prod.url}
+        alt={prod.heading}
+        className="w-full h-24 object-cover rounded mb-2"
+      />
+      <p className="text-sm font-medium line-clamp-1">{prod.heading}</p>
+      <p className="text-xs text-gray-500">Category: {prod.catogory}</p>
+      <p className="text-xs font-semibold">Qty: {product.qty || 1}</p>
+    </div>
+  );
+};
 
 // Main Orders Component
 export const Orders = () => {
@@ -289,9 +282,7 @@ export const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get(
-          `${API_BASE_URL}/admin/gettotalorders`
-        );
+        const { data } = await axios.get(`${API_BASE_URL}/admin/gettotalorders`);
         setOrders(data.data);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
@@ -443,11 +434,6 @@ export const Orders = () => {
                         {order.paymentmethod} • ₹
                         {order.totalAmount?.toLocaleString()}
                       </p>
-                      {/* {order.razorpayOrderId && (
-                        <p className="text-xs text-gray-500 mt-1">
-                          Razorpay ID: {order.razorpayOrderId}
-                        </p>
-                      )} */}
                     </div>
 
                     <div>

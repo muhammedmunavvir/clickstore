@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 import { getproductsModel } from "../models/productsScheama.js";
 import { usermodel } from "../models/userScheama.js";
 
-
 import { CustomErrorhandler } from "../utilities/customErrorHAndling.js";
 import { orderModel } from "../models/order-scheama.js";
 import { trycatch } from "../utilities/AsyncErrorHandling.js";
 
 //GET ALL USERS
- 
+
 export const allusers = trycatch(async (req, res) => {
   const users = await usermodel.find(
     { role: { $ne: "admin" } },
@@ -87,22 +86,20 @@ export const productsById = trycatch(async (req, res) => {
 //CREATE NEW PRODUCT
 
 export const addNewProduct = trycatch(async (req, res) => {
-
-
   if (!req.file) {
     throw CustomErrorhandler("Image upload failed");
   }
 
   const productDetails = {
-      heading: req.body.heading,
-      discription: req.body.discription,
-      catogory: req.body.catogory,
-      price: Number(req.body.price),
-      rating: Number(req.body.rating) || 0,
-      qty: Number(req.body.qty) || 0,
-      url: req.file.path,   // Cloudinary URL
-      measurement:req.body.measurement
-    };
+    heading: req.body.heading,
+    discription: req.body.discription,
+    catogory: req.body.catogory,
+    price: Number(req.body.price),
+    rating: Number(req.body.rating) || 0,
+    qty: Number(req.body.qty) || 0,
+    url: req.file.path, // Cloudinary URL
+    measurement: req.body.measurement,
+  };
 
   const product = await getproductsModel.create(productDetails);
 
@@ -114,7 +111,6 @@ export const addNewProduct = trycatch(async (req, res) => {
     .status(201)
     .json({ status: "success", message: "product created successfully" });
 });
-
 
 //UPDATE PRODUCT
 
@@ -135,7 +131,7 @@ export const updateProduct = trycatch(async (req, res) => {
     .status(500)
     .json({ status: "fail", message: "failed to update the products" });
 });
- 
+
 //DELETE PRODUCT
 
 export const deleteproduct = trycatch(async (req, res) => {
@@ -149,7 +145,10 @@ export const deleteproduct = trycatch(async (req, res) => {
 export const Gettotalorders = trycatch(async (req, res) => {
   console.log(req.url);
 
-  const Totalorders = await orderModel.find().sort({createdAt:-1})
+  const Totalorders = await orderModel.find().sort({ createdAt: -1 }).populate({
+    path: "products.productId", // assuming inside products you have productId ref
+    model: "products",
+  });
   console.log(Totalorders);
 
   return res

@@ -10,6 +10,8 @@ const Productdetails = () => {
   window.scroll(0, 0);
   const { id } = useParams();
   const [product, setProducts] = useState(null);
+  const [loading, setLoading] = useState(false); // <-- add loading state
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +37,8 @@ const Productdetails = () => {
     }
 
     try {
-      await addItem(product._id); 
+      setLoading(true);
+      await addItem(product._id);
       toast.success("Product added successfully");
     } catch (error) {
       if (
@@ -46,6 +49,8 @@ const Productdetails = () => {
       } else {
         toast.error("Something went wrong. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,7 +123,8 @@ const Productdetails = () => {
             onClick={() => tocart(product)}
             className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:from-blue-500 hover:to-purple-500 hover:scale-105 transition-transform duration-300"
           >
-            Add to Cart
+           
+            {loading ? "Adding..." : "Add to Cart"}{" "}
           </button>
         </div>
       </div>
