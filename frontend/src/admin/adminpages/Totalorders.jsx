@@ -152,8 +152,9 @@ const generateOrderPDF = async (orderId, orderData) => {
       }
 
       pdf.text(`${i + 1}`, margin + 1, y + 5);
-      pdf.text(p.heading, margin + 20, y + 5, { maxWidth: 70 });
-      pdf.text(p.catogory, 100, y + 5, { maxWidth: 35 });
+      pdf.text(p.heading || "", margin + 20, y + 5);
+      pdf.text(p.catogory || "", 100, y + 5);
+
       pdf.text(`${p.qty || 1}`, 140, y + 5);
       pdf.text(`${p.price}`, pdfWidth - margin - 5, y + 5, { align: "right" });
       y += 6;
