@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import API_BASE_URL from "../../config/apiconfig";
 import jsPDF from "jspdf";
-import qrImage from "../../assets/frontend/WhatsApp Image 2025-08-16 at 09.49.48_9184f88a.jpg"; // <-- replace with your QR code image
-
 // Status badge component
 const StatusBadge = ({ status }) => {
   const statusStyles = {
@@ -12,12 +10,12 @@ const StatusBadge = ({ status }) => {
     Cancelled: "bg-red-100 text-red-700",
     default: "bg-gray-100 text-gray-700",
   };
-
+  
   return (
     <span
-      className={`text-xs px-3 py-1 rounded-full font-semibold ${
-        statusStyles[status] || statusStyles.default
-      }`}
+    className={`text-xs px-3 py-1 rounded-full font-semibold ${
+      statusStyles[status] || statusStyles.default
+    }`}
     >
       {status}
     </span>
@@ -31,38 +29,38 @@ const generateOrderPDF = async (orderId, orderData) => {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const margin = 15;
     let y = margin;
-
+    
     // Title
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
     pdf.setTextColor(40, 40, 40);
     pdf.text("ORDER INVOICE", pdfWidth / 2, y, { align: "center" });
     y += 10;
-
+    
     // Order Info
     const createdDate = new Date(orderData.createdAt);
     const day = createdDate.getDate().toString().padStart(2, "0");
     const month = createdDate.toLocaleString("default", { month: "long" });
     const year = createdDate.getFullYear();
     const formattedDate = `${day}-${month.toLowerCase()}-${year}`;
-
+    
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
     pdf.text(`Order ID: ${orderData.orderId || orderData._id}`, margin, y);
     pdf.text(`Date: ${formattedDate}`, pdfWidth - margin, y, { align: "right" });
     y += 8;
-
+    
     // Divider
     pdf.setDrawColor(200, 200, 200);
     pdf.line(margin, y, pdfWidth - margin, y);
     y += 5;
-
+    
     // Pickup Address
     pdf.setFont("helvetica", "bold");
     pdf.text("Pickup Address", margin, y);
     pdf.setFont("helvetica", "normal");
     y += 6;
-
+    
     const pickupAddressLines = [
       "CLICKSTORE",
       "Cherukattoor (PO)",
@@ -71,7 +69,7 @@ const generateOrderPDF = async (orderId, orderData) => {
       "TRN: 322400002305ES2",
       "FSSAI: 21320247000337",
     ];
-
+    
     pickupAddressLines.forEach((line) => {
       if (y > 250) {
         pdf.addPage();
@@ -80,9 +78,9 @@ const generateOrderPDF = async (orderId, orderData) => {
       pdf.text(line, margin, y);
       y += 5;
     });
-
+    
     y += 5;
-
+    
     // Shipping Address
     const a = orderData.shippingAddress || {};
     pdf.setFont("helvetica", "bold");
@@ -101,7 +99,7 @@ const generateOrderPDF = async (orderId, orderData) => {
       `Phone: ${a.mobilenumber || ""}`,
       `Email: ${a.email || ""}`,
     ];
-
+    
     shippingAddressLines.forEach((line) => {
       if (y > 250) {
         pdf.addPage();
@@ -117,7 +115,7 @@ const generateOrderPDF = async (orderId, orderData) => {
     pdf.setFont("helvetica", "bold");
     pdf.text(`Products (${orderData.products.length})`, margin, y);
     y += 6;
-
+    
     // Product Table Header
     pdf.setFillColor(245, 245, 245);
     pdf.rect(margin, y, pdfWidth - margin * 2, 7, "F");
@@ -129,7 +127,7 @@ const generateOrderPDF = async (orderId, orderData) => {
     pdf.text("Qty", 140, y + 5);
     pdf.text("Price", pdfWidth - margin - 5, y + 5, { align: "right" });
     y += 7;
-
+    
     // Product Rows
     pdf.setFont("helvetica", "normal");
     orderData.products.forEach((p, i) => {
@@ -161,7 +159,7 @@ const generateOrderPDF = async (orderId, orderData) => {
         y += 3;
       }
     });
-
+    
     if (y > 200) {
       pdf.addPage();
       y = margin;
@@ -189,7 +187,7 @@ const generateOrderPDF = async (orderId, orderData) => {
     const boxHeight = 14;
     const boxWidth = pdfWidth - margin * 2;
     pdf.rect(margin, y, boxWidth, boxHeight, "F");
-
+    
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(12);
     pdf.setTextColor(30, 30, 30);
@@ -200,7 +198,8 @@ const generateOrderPDF = async (orderId, orderData) => {
     );
 
     y += boxHeight + 5;
-
+    
+    const qrImage = "/WhatsApp Image 2025-08-16 at 09.49.48_9184f88a.jpg";
     // Add QR Code image
     const qrSize = 40; // mm
     pdf.addImage(
