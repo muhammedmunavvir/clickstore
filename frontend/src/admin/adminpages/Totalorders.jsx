@@ -443,11 +443,11 @@ export const Orders = () => {
                         {order.paymentmethod} • ₹
                         {order.totalAmount?.toLocaleString()}
                       </p>
-                      {order.razorpayOrderId && (
+                      {/* {order.razorpayOrderId && (
                         <p className="text-xs text-gray-500 mt-1">
                           Razorpay ID: {order.razorpayOrderId}
                         </p>
-                      )}
+                      )} */}
                     </div>
 
                     <div>
