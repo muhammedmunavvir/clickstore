@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import API_BASE_URL from "../../config/apiconfig";
 import jsPDF from "jspdf";
+import qrImage from "../../assets/frontend/WhatsApp Image 2025-08-16 at 09.49.48_9184f88a.jpg"; // <-- replace with your QR code image
 
 // Status badge component
 const StatusBadge = ({ status }) => {
@@ -41,16 +42,14 @@ const generateOrderPDF = async (orderId, orderData) => {
     // Order Info
     const createdDate = new Date(orderData.createdAt);
     const day = createdDate.getDate().toString().padStart(2, "0");
-    const month = createdDate.toLocaleString("default", { month: "long" }); // "July"
+    const month = createdDate.toLocaleString("default", { month: "long" });
     const year = createdDate.getFullYear();
     const formattedDate = `${day}-${month.toLowerCase()}-${year}`;
 
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
     pdf.text(`Order ID: ${orderData.orderId || orderData._id}`, margin, y);
-    pdf.text(`Date: ${formattedDate}`, pdfWidth - margin, y, {
-      align: "right",
-    });
+    pdf.text(`Date: ${formattedDate}`, pdfWidth - margin, y, { align: "right" });
     y += 8;
 
     // Divider
@@ -75,7 +74,6 @@ const generateOrderPDF = async (orderId, orderData) => {
 
     pickupAddressLines.forEach((line) => {
       if (y > 250) {
-        // Check if we're near the bottom
         pdf.addPage();
         y = margin;
       }
@@ -138,7 +136,6 @@ const generateOrderPDF = async (orderId, orderData) => {
       if (y > 250) {
         pdf.addPage();
         y = margin;
-        // Redraw table header if we're on a new page
         pdf.setFillColor(245, 245, 245);
         pdf.rect(margin, y, pdfWidth - margin * 2, 7, "F");
         pdf.setFontSize(9);
@@ -151,17 +148,13 @@ const generateOrderPDF = async (orderId, orderData) => {
         y += 7;
       }
 
-      //FOR UNDERSTAND THE SERVER ISSUE
-
       pdf.text(`${i + 1}`, margin + 1, y + 5);
       pdf.text(p.heading || "", margin + 20, y + 5);
       pdf.text(p.catogory || "", 100, y + 5);
-
       pdf.text(`${p.qty || 1}`, 140, y + 5);
       pdf.text(`${p.price}`, pdfWidth - margin - 5, y + 5, { align: "right" });
       y += 6;
 
-      // Add small divider between products
       if (i < orderData.products.length - 1) {
         pdf.setDrawColor(230, 230, 230);
         pdf.line(margin, y + 1, pdfWidth - margin, y + 1);
@@ -169,7 +162,6 @@ const generateOrderPDF = async (orderId, orderData) => {
       }
     });
 
-    // Ensure we have space for payment summary
     if (y > 200) {
       pdf.addPage();
       y = margin;
@@ -192,23 +184,15 @@ const generateOrderPDF = async (orderId, orderData) => {
 
     y += 5;
 
-    // Total Amount Box
     const totalAmount = parseFloat(orderData.totalAmount || 0);
-
-    // Add background box
     pdf.setFillColor(245, 245, 245);
     const boxHeight = 14;
     const boxWidth = pdfWidth - margin * 2;
     pdf.rect(margin, y, boxWidth, boxHeight, "F");
 
-    // Correctly render Rupee symbol using Unicode
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(12);
     pdf.setTextColor(30, 30, 30);
-
-    // Use Unicode ₹ and add spacing
-    // const rupeeSymbol = '\u20B9'; // Unicode for ₹
-
     pdf.text(
       `Total Amount: ${totalAmount.toLocaleString("en-IN")}`,
       margin + 5,
@@ -217,7 +201,27 @@ const generateOrderPDF = async (orderId, orderData) => {
 
     y += boxHeight + 5;
 
-    // Footer
+    // Add QR Code image
+    const qrSize = 40; // mm
+    pdf.addImage(
+      qrImage,
+      "JPG",
+      pdfWidth - margin - qrSize,
+      pdf.internal.pageSize.getHeight() - margin - qrSize - 10,
+      qrSize,
+      qrSize
+    );
+
+    pdf.setFontSize(8);
+    pdf.setTextColor(100);
+    pdf.text(
+      "Scan for website",
+      pdfWidth - margin - qrSize / 2,
+      pdf.internal.pageSize.getHeight() - margin - 2,
+      { align: "center" }
+    );
+
+    // Footer text
     pdf.setFontSize(8);
     pdf.setTextColor(150);
     pdf.text(
@@ -297,15 +301,12 @@ export const Orders = () => {
         setIsLoading(false);
       }
     };
-
     fetchOrders();
   }, []);
 
   const handleDownloadPDF = async (orderId) => {
     const order = orders.find((o) => o._id === orderId);
-    if (order) {
-      await generateOrderPDF(orderId, order);
-    }
+    if (order) await generateOrderPDF(orderId, order);
   };
 
   const statusColors = {
@@ -321,9 +322,6 @@ export const Orders = () => {
         `${API_BASE_URL}/admin/update-order-status/${orderId}`,
         { status }
       );
-      console.log("Status updated:", res.data);
-
-      // Optional: Refresh orders after update
       setOrders((prevOrders) =>
         prevOrders.map((o) => (o._id === orderId ? { ...o, status } : o))
       );
@@ -332,7 +330,7 @@ export const Orders = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading)
     return (
       <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -341,9 +339,8 @@ export const Orders = () => {
         </div>
       </div>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
       <div className="p-6 bg-gray-100 min-h-screen flex items-center justify-center">
         <div className="bg-white p-6 rounded-lg shadow-md max-w-md text-center">
@@ -357,7 +354,6 @@ export const Orders = () => {
         </div>
       </div>
     );
-  }
 
   return (
     <div className="p-4 md:p-6 bg-gray-100 min-h-screen">
@@ -397,23 +393,20 @@ export const Orders = () => {
 
                   {order.status !== "Cancelled" && (
                     <div>
-                      {[
-                        "Packing",
-                        "Shipped",
-                        "Out for Delivery",
-                        "Completed",
-                      ].map((s) => (
-                        <button
-                          key={s}
-                          onClick={() => updateOrderStatus(order._id, s)}
-                          className={`text-xs px-2 py-1 rounded mr-1 transition font-medium ${
-                            statusColors[s] ||
-                            "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                          }`}
-                        >
-                          {s}
-                        </button>
-                      ))}
+                      {["Packing", "Shipped", "Out for Delivery", "Completed"].map(
+                        (s) => (
+                          <button
+                            key={s}
+                            onClick={() => updateOrderStatus(order._id, s)}
+                            className={`text-xs px-2 py-1 rounded mr-1 transition font-medium ${
+                              statusColors[s] ||
+                              "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        )
+                      )}
                     </div>
                   )}
 
