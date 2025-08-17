@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin:"https://clickstore-pi.vercel.app",
+    origin: "https://clickstore-pi.vercel.app", // your frontend
     credentials: true,
   })
 );
@@ -27,7 +27,12 @@ app.use(
 // ✅ Initialize passport BEFORE routes
 app.use(passport.initialize());
 
-app.use("/", routes); // ✅ Now routes can use passport.authenticate
+// ✅ Add a root test route so Render health check succeeds
+app.get("/", (req, res) => {
+  res.send("✅ Clickstore API is running on Render!");
+});
+
+app.use("/", routes); // ✅ Your API routes
 
 app.use(ErrorHandlingMiddilware);
 
@@ -39,10 +44,8 @@ process.on("unhandledRejection", (err) => {
 });
 
 const PORT = process.env.PORT || 8080;
-  
 console.log("PORT VALUE:", PORT);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
- 
